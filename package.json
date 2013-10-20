@@ -19,5 +19,10 @@
   "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/MaxGfeller/youtube-mp3/issues"
+  },
+  "dependencies": {
+    "runnel": "~0.5.1",
+    "urlencode": "0.0.1",
+    "follow-redirects": "0.0.3"
   }
 }
