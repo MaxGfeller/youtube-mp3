@@ -16,7 +16,7 @@ downloader.download = function(youtubeLink, filename) {
   var itemInfoLink = this.baseLink + '/a/itemInfo' +
     '/?video_id={0}&ac=www&t=grp';
 
-  var downloadLink = this.baseLink + '/get?video_id={0}&h={1}';
+  var downloadLink = '/get?video_id={0}&h={1}';
 
   var pushItem = function(cb) {
     http.get(pushItemLink, function(res) {
@@ -50,23 +50,34 @@ downloader.download = function(youtubeLink, filename) {
 
   var downloadFile = function(token, reqBody, cb) {
     eval(reqBody);
-    http.get(downloadLink.replace('{0}', token).replace('{1}', info.h), function(res) {
-      var writeFile = fs.createWriteStream(filename, {'flags': 'a'});
+    var options = {
+      path: downloadLink.replace('{0}', token).replace('{1}', info.h),
+      host: this.baseLink,
+      agent: false
+    };
 
-      var body = '';
+    var req = http.get(options, function(res) {
+      var writeFile = fs.createWriteStream(filename, {'flags': 'a'});
       res.on('data', function(chunk) {
         writeFile.write(chunk, encoding='binary');
       });
 
       res.on('end', function() {
-        console.log('end');
         writeFile.end();
         cb(null, 'Successfully downloaded song');
       });
     });
   }
 
-  runnel(pushItem, getItemInfo, downloadFile, console.log);
+  runnel(
+      pushItem,
+      getItemInfo,
+      downloadFile,
+      function done(err, msg) {
+        if(err) return console.log(err);
+
+        console.log(msg);
+      });
 }
 
 module.exports = downloader;
