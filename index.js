@@ -8,7 +8,7 @@ var downloader = {};
 
 downloader.baseLink = 'http://www.youtube-mp3.org';
 
-downloader.download = function(youtubeLink, filename) {
+downloader.download = function(youtubeLink, filename, finalCallback) {
   var pushItemLink = this.baseLink + '/a/pushItem' +
     '/?item=' + urlencode(youtubeLink) + 
     '&el=na&bf=false';
@@ -64,7 +64,7 @@ downloader.download = function(youtubeLink, filename) {
 
       res.on('end', function() {
         writeFile.end();
-        cb(null, 'Successfully downloaded song');
+        cb(null);
       });
     });
   }
@@ -73,10 +73,8 @@ downloader.download = function(youtubeLink, filename) {
       pushItem,
       getItemInfo,
       downloadFile,
-      function done(err, msg) {
-        if(err) return console.log(err);
-
-        console.log(msg);
+      function done(err) {
+        finalCallback(err);
       });
 }
 
