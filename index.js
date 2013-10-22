@@ -6,7 +6,8 @@ var fs = require('fs');
 
 var downloader = {};
 
-downloader.baseLink = 'http://www.youtube-mp3.org';
+downloader.host = 'www.youtube-mp3.org';
+downloader.baseLink = 'http://' + downloader.host;
 
 downloader.download = function(youtubeLink, filename, finalCallback) {
   var pushItemLink = this.baseLink + '/a/pushItem' +
@@ -49,10 +50,15 @@ downloader.download = function(youtubeLink, filename, finalCallback) {
   }
 
   var downloadFile = function(token, reqBody, cb) {
+    if(reqBody.indexOf('info') !== 0) {
+      cb(reqBody);
+      return;
+    }
     eval(reqBody);
+
     var options = {
       path: downloadLink.replace('{0}', token).replace('{1}', info.h),
-      host: this.baseLink,
+      host: this.host,
       agent: false
     };
 
@@ -66,13 +72,15 @@ downloader.download = function(youtubeLink, filename, finalCallback) {
         writeFile.end();
         cb(null);
       });
+    }).on('error', function(e) {
+      cb(e);
     });
   }
 
   runnel(
       pushItem,
       getItemInfo,
-      downloadFile,
+      downloadFile.bind(this),
       function done(err) {
         finalCallback(err);
       });
