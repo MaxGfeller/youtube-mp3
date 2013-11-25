@@ -5,7 +5,7 @@ Download the audio from [Youtube](https://youtube.com) videos as mp3 file. This 
 ## Usage
 
 ```javascript
-var mp3 = require('./index.js');
+var mp3 = require('youtube-mp3');
 
 mp3.download('https://www.youtube.com/watch?v=bRmSMdQnfAc', 'LXJS 2013 Keynote', function(err) {
     if(err) return console.log(err);
