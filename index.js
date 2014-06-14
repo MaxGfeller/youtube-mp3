@@ -6,8 +6,7 @@ var fs = require('fs');
 
 var downloader = {};
 
-downloader.host = 'www.youtube-mp3.org';
-downloader.baseLink = 'http://' + downloader.host;
+var host = 'www.youtube-mp3.org';
 
 var pushItemLink = null;
 var itemInfoLink = null;
@@ -30,7 +29,11 @@ var _cc = function(a) {
  * Push the item to their API
  **/
 var pushItem = function(cb) {
-  http.get(pushItemLink, function(res) {
+  http.get({
+      host: host,
+      schema: 'http',
+      path: pushItemLink
+  }, function(res) {
     res.setEncoding('utf8');
     var body = '';
 
@@ -48,7 +51,11 @@ var pushItem = function(cb) {
  * Get the item info link
  **/
 var getItemInfo = function(token, cb) {
-  http.get(itemInfoLink.replace('{0}', token), function(res) {
+  http.get({
+      host: host,
+      schema: 'http',
+      path: itemInfoLink.replace('{0}', token)
+  }, function(res) {
     res.setEncoding('utf8');
     var body = '';
 
@@ -87,7 +94,7 @@ var downloadFile = function(token, info, cb) {
     path: downloadLink.replace('{0}', token).
       replace('{1}', info.h).
       replace('{2}', timestamp + '.' + _cc(token + timestamp)),
-    host: this.host,
+    host: host,
     agent: false
   };
 
@@ -108,7 +115,7 @@ var downloadFile = function(token, info, cb) {
 
 var getDownloadLink = function(token, info, cb) {
     var timestamp = (new Date).getTime();
-    var url = this.host + downloadLink.replace('{0}', token).
+    var url = host + downloadLink.replace('{0}', token).
       replace('{1}', info.h).
       replace('{2}', timestamp + '.' + _cc(token + timestamp));
 
@@ -116,10 +123,10 @@ var getDownloadLink = function(token, info, cb) {
 }
 
 downloader.getDownloadLink = function(youtubeLink, finalCallback) {
-    pushItemLink = this.baseLink + '/a/pushItem' +
+    pushItemLink = '/a/pushItem' +
       '/?item=' + urlencode(youtubeLink) +
       '&el=na&bf=false';
-    itemInfoLink = this.baseLink + '/a/itemInfo' +
+    itemInfoLink = '/a/itemInfo' +
       '/?video_id={0}&ac=www&t=grp';
     runnel(
         pushItem,
@@ -133,10 +140,10 @@ downloader.getDownloadLink = function(youtubeLink, finalCallback) {
 
 downloader.download = function(youtubeLink, file, finalCallback) {
   filename = file;
-  pushItemLink = this.baseLink + '/a/pushItem' +
+  pushItemLink = '/a/pushItem' +
     '/?item=' + urlencode(youtubeLink) +
     '&el=na&bf=false';
-  itemInfoLink = this.baseLink + '/a/itemInfo' +
+  itemInfoLink = '/a/itemInfo' +
     '/?video_id={0}&ac=www&t=grp';
   runnel(
       pushItem,
