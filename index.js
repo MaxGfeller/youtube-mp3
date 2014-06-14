@@ -1,6 +1,5 @@
 var http = require('follow-redirects').http;
 var test = require('net');
-var urlencode = require('urlencode');
 var runnel = require('runnel');
 var fs = require('fs');
 
@@ -124,7 +123,7 @@ var getDownloadLink = function(token, info, cb) {
 
 downloader.getDownloadLink = function(youtubeLink, finalCallback) {
     pushItemLink = '/a/pushItem' +
-      '/?item=' + urlencode(youtubeLink) +
+      '/?item=' + encodeURI(youtubeLink) +
       '&el=na&bf=false';
     itemInfoLink = '/a/itemInfo' +
       '/?video_id={0}&ac=www&t=grp';
@@ -141,7 +140,7 @@ downloader.getDownloadLink = function(youtubeLink, finalCallback) {
 downloader.download = function(youtubeLink, file, finalCallback) {
   filename = file;
   pushItemLink = '/a/pushItem' +
-    '/?item=' + urlencode(youtubeLink) +
+    '/?item=' + encodeURI(youtubeLink) +
     '&el=na&bf=false';
   itemInfoLink = '/a/itemInfo' +
     '/?video_id={0}&ac=www&t=grp';
